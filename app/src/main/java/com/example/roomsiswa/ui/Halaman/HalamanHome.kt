@@ -35,6 +35,7 @@ import com.example.roomsiswa.data.Siswa
 import com.example.roomsiswa.model.HomeViewModel
 import com.example.roomsiswa.model.PenyediaViewModel
 import com.example.roomsiswa.navigasi.DestinasiNavigasi
+import com.example.roomsiswa.navigasi.SiswaToAppBar
 
 object DestinasiHome : DestinasiNavigasi {
         override val route = "home"
@@ -52,7 +53,13 @@ object DestinasiHome : DestinasiNavigasi {
 
         Scaffold(
             modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = {},
+            topBar = {
+                SiswaToAppBar(
+                    title = stringResource(DestinasiHome.titleRes),
+                    canNavigasiBack = false,
+                    scrollBehavior = scrollBehavior
+                )
+            },
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = navigateToitemEntry,
@@ -74,7 +81,6 @@ object DestinasiHome : DestinasiNavigasi {
                     .padding(innerPadding)
                     .fillMaxSize()
             )
-
 
         }
 
@@ -120,19 +126,24 @@ fun ListSiswa(
 @Composable
 fun DataSiswa(
     siswa: Siswa,
-    modifier: Modifier=Modifier
-){
-    Card(modifier = modifier,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Column(modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large)),
+        Column(
+            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large)),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small))
 
         ) {
-            Row(modifier = Modifier.fillMaxWidth()
+            Row(
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = siswa.nama,
-                    style = MaterialTheme.typography.titleLarge)
+                Text(
+                    text = siswa.nama,
+                    style = MaterialTheme.typography.titleLarge
+                )
 
                 Spacer(Modifier.weight(1f))
 
@@ -156,5 +167,3 @@ fun DataSiswa(
     }
 
 }
-
-
