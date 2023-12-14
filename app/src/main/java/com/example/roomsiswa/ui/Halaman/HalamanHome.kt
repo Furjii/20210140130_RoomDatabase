@@ -1,3 +1,4 @@
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,91 +39,107 @@ import com.example.roomsiswa.navigasi.DestinasiNavigasi
 import com.example.roomsiswa.navigasi.SiswaToAppBar
 
 object DestinasiHome : DestinasiNavigasi {
-        override val route = "home"
-        override val titleRes = R.string.app_name
-    }
+    override val route = "home"
+    override val titleRes = R.string.app_name
+}
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    fun HomeScreen(
-        navigateToitemEntry: () -> Unit,
-        modifier: Modifier = Modifier,
-        viewModel: HomeViewModel = viewModel(factory = PenyediaViewModel.Factory)
-    ) {
-        val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeScreen(
+    navigateToitemEntry: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel = viewModel(factory = PenyediaViewModel.Factory),
+    onDetailClick: (Int) -> Unit ={}
+) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-        Scaffold(
-            modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = {
-                SiswaToAppBar(
-                    title = stringResource(DestinasiHome.titleRes),
-                    canNavigasiBack = false,
-                    scrollBehavior = scrollBehavior
-                )
-            },
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = navigateToitemEntry,
-                    shape = MaterialTheme.shapes.medium,
-                    modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large))
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(R.string.entry_siswa)
-                    )
-
-                }
-            },
-        ) { innerPadding ->
-            val uiStateSiswa by viewModel.homeUiState.collectAsState()
-            BodyHome(
-                itemSiswa = uiStateSiswa.listSiswa,
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
+    Scaffold(
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            SiswaToAppBar(
+                title = stringResource(DestinasiHome.titleRes),
+                canNavigasiBack = false,
+                scrollBehavior = scrollBehavior
             )
-
-        }
-
-    }
-
-    @Composable
-    fun BodyHome(
-        itemSiswa: List<Siswa>,
-        modifier: Modifier = Modifier
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = modifier
-        ) {
-            if (itemSiswa.isEmpty()) {
-                Text(
-                    text = stringResource(R.string.deskripsi_no_item),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleLarge
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = navigateToitemEntry,
+                shape = MaterialTheme.shapes.medium,
+                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large))
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(R.string.entry_siswa)
                 )
-            } else {
-                ListSiswa(
-                    itemSiswa = itemSiswa,
-                    modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small)))
+
             }
-        }
+        },
+    ) { innerPadding ->
+        val uiStateSiswa by viewModel.homeUiState.collectAsState()
+        BodyHome(
+            itemSiswa = uiStateSiswa.listSiswa,
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
+            onSiswaClick = onDetailClick
+        )
+
+
     }
+
+}
+
+@Composable
+fun BodyHome(
+    itemSiswa: List<Siswa>,
+    modifier: Modifier = Modifier,
+    onSiswaClick: (Int) -> Unit = {}
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        if (itemSiswa.isEmpty()) {
+            Text(
+                text = stringResource(R.string.deskripsi_no_item),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleLarge
+            )
+        } else {
+            ListSiswa(
+                itemSiswa = itemSiswa,
+                modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small)),
+                onItemCLick = {onSiswaClick(it.id)}
+            )
+        }
+
+    }
+
+}
+
 @Composable
 fun ListSiswa(
     itemSiswa: List<Siswa>,
-    modifier: Modifier=Modifier
-){
-    LazyColumn(modifier = Modifier){
-        items(items = itemSiswa, key = {it.id}){
-                person ->
+    modifier: Modifier = Modifier,
+    onItemCLick: (Siswa) -> Unit
+) {
+    LazyColumn(modifier = Modifier) {
+        items(items = itemSiswa, key = { it.id }) { person ->
             DataSiswa(
                 siswa = person,
-                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small))
+                modifier = Modifier
+                    .padding(dimensionResource(id = R.dimen.padding_small))
+                    .clickable { onItemCLick(person) }
             )
+
         }
+
     }
+
+
 }
+
 @Composable
 fun DataSiswa(
     siswa: Siswa,

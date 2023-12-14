@@ -1,10 +1,12 @@
 package com.example.roomsiswa.model
 
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.roomsiswa.ui.AplikasiSiswa
+
 
 object PenyediaViewModel {
     val Factory =  viewModelFactory {
@@ -14,6 +16,15 @@ object PenyediaViewModel {
         initializer {
             EntryViewModel(AplikasiSiswa().container.repositoriSiswa)
         }
+        initializer {
+            DetailsViewModel(
+                createSavedStateHandle(),
+                AplikasiSiswa().container.repositoriSiswa,
+            )
+        }
+        initializer {
+            EditViewModel(createSavedStateHandle(), AplikasiSiswa().container.repositoriSiswa)
+        }
     }
 }
 
@@ -21,5 +32,5 @@ object PenyediaViewModel {
 Fungsi ekstensi query untuk objek [Application] dan mengembalikan sebuah instance dari
 [AplikasiSiswa]
  */
-fun CreationExtras.AplikasiSiswa(): AplikasiSiswa = (this
+fun CreationExtras.AplikasiSiswa():AplikasiSiswa = (this
     [ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as AplikasiSiswa)
